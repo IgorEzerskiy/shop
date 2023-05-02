@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from django.views.generic.base import TemplateView
+from main_app.models import Product
 
-# Create your views here.
+
+class HomePage(TemplateView):
+    template_name = 'home_page.html'
+    extra_context = {'products': Product.objects.all()}

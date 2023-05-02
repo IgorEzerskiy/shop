@@ -79,7 +79,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'shop_db',
-        'USER': 'shop_app',
+        'USER': 'shop_db',
         'PASSWORD': '76buhobu',
         'HOST': 'localhost',
         'PORT': '5432',
