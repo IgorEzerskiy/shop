@@ -1,0 +1,81 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex justify-content-around">
+    <div class=" mb-3 d-flex align-items-center" style="max-width: 540px; margin-top: 15px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                <img src="{% static request.user.image %}" class="rounded mx-auto d-block"
+                     style="height: 150px; weight: 150px" alt="{{request.user.username}}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body" style="margin-left: 45px">
+                    <h5 class="card-title">Username: {{request.user.username}}</h5>
+                    <h6 class="card-title">Wallet: {{request.user.wallet}}₴</h6>
+                    <p class="card-text">First name: {{request.user.first_name}}</p>
+                    <p class="card-text">Last name: {{request.user.last_name}}</p>
+                    <p class="card-text">Email: {{request.user.email}}</p>
+                    <p class="card-text"><small class="text-body-secondary">Created at:
+                        {{request.user.date_joined}}</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="w-auto p-3">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseOne">
+                My purchases
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Product name</th>
+                        <th scope="col">Bought</th>
+                        <th scope="col">Purchase time</th>
+                    </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                    {% for item in purchase %}
+                    <tr>
+                        <th scope="row">{{item.id}}</th>
+                        <td>
+                            <img src="{% static item.product.image %}" class="rounded mx-auto d-block"
+                                 style="height: 200px; weight: 200px" alt="{{ item.product.slug }}">
+                        </td>
+                        <td>{{item.product.title}}</td>
+                        <td>{{item.product_quantity}}</td>
+                        <td>{{item.purchase_time}}</td>
+                        <td><a class="btn btn-danger" href="">Return</a></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

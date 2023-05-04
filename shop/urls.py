@@ -16,12 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from main_app.views import HomePage
+from main_app.views import HomePage, ProductList, Profile, Login, Logout, ProductItem
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', HomePage.as_view(), name='home_page')
+    path('', HomePage.as_view(), name='home_page'),
+    path('profile/', Profile.as_view(), name='profile'),
+    path('product-list/', ProductList.as_view(), name='product_list'),
+    path('login/', Login.as_view(), name='login'),
+    path('logout/', Logout.as_view(), name='logout'),
+    path('product/<slug:slug>/', ProductItem.as_view(), name='product_item')
 ]
 
 urlpatterns += staticfiles_urlpatterns()

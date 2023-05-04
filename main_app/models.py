@@ -6,6 +6,7 @@ from django.utils.text import slugify
 
 class Customer(AbstractUser):
     wallet = models.DecimalField(decimal_places=2, max_digits=20)
+    image = models.ImageField(upload_to='main_app/', max_length=100, null=True)
 
     def save(self, **kwargs):
         self.wallet = 10000

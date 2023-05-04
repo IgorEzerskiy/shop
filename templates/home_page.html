@@ -12,9 +12,9 @@
                     <h5 class="card-title">{{ product.title }}</h5>
                     <p class="card-text">{{ product.description }}</p>
                     <p></p>
-                    <p class="card-text">Price: {{ product.price }}</p>
+                    <p class="card-text">Price: {{ product.price }}₴</p>
                 </div>
-                <button type="button" class="btn btn-success">Buy</button>
+                <a href={% url "product_item" product.slug %} class="btn btn-success">Show</a>
             </div>
         </div>
       {% endfor %}
