@@ -1,0 +1,15 @@
+from django import forms
+from main_app.models import Product
+
+
+class AddProduct(forms.ModelForm):
+    title = forms.CharField(label='Product name', max_length=150, required=True)
+    description = forms.CharField(label='Description', max_length=1500, required=True)
+    price = forms.DecimalField(label='Price', max_digits=20, decimal_places=2, required=True)
+    quantity = forms.IntegerField(label='Quantity', min_value=1, required=True)
+    image = forms.ImageField(label='Image', max_length=100, required=False)
+
+    class Meta:
+        model = Product
+        fields = ['title', 'description', 'price', 'quantity', 'image']
+

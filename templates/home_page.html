@@ -7,7 +7,11 @@
       {% for product in products%}
         <div class="col">
             <div class="card h-100">
-                <img src="{% static product.image %}" class="card-img-top" alt="{{ product.slug }}">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.slug }}">
+                {% else %}
+                    <img src="{% static 'images/No Product Image Available.png' %}" class="card-img-top" alt="{{ product.slug }}">
+                {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ product.title }}</h5>
                     <p class="card-text">{{ product.description }}</p>

@@ -6,7 +6,7 @@ from django.utils.text import slugify
 
 class Customer(AbstractUser):
     wallet = models.DecimalField(decimal_places=2, max_digits=20)
-    image = models.ImageField(upload_to='main_app/', max_length=100, null=True)
+    image = models.ImageField(upload_to='main_app/static/images/', max_length=100, null=True)
 
     def save(self, **kwargs):
         self.wallet = 10000
@@ -17,13 +17,12 @@ class Product(models.Model):
     slug = models.SlugField(max_length=150, unique=True)
     title = models.CharField(max_length=150)
     description = models.TextField(null=True, blank=True)
-    image = models.ImageField(upload_to='main_app/', max_length=100)
+    image = models.ImageField(upload_to='main_app/static/images/', max_length=100)
     price = models.DecimalField(decimal_places=2, max_digits=20)
     quantity = models.PositiveIntegerField()
 
     def save(self, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title) + '-' + str(self.id)
+        self.slug = slugify(self.title) + '-' + str(datetime.datetime.now().strftime("%Y-%m-%d-%H-%M"))
         return super().save(**kwargs)
 
     def __str__(self):

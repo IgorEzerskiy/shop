@@ -6,8 +6,14 @@
     <div class=" mb-3 d-flex align-items-center" style="max-width: 540px; margin-top: 15px;">
         <div class="row g-0">
             <div class="col-md-4">
-                <img src="{% static request.user.image %}" class="rounded mx-auto d-block"
+                {% if request.user.image %}
+                <img src="{{ request.user.image.url }}" class="rounded mx-auto d-block"
                      style="height: 150px; weight: 150px" alt="{{request.user.username}}">
+                {% else %}
+                <img src="{% static 'images/png-transparent-computer-icons-user-profile-synonyms-and-antonyms-android-android-computer-wallpaper-monochrome-sphere.png' %}"
+                     class="rounded mx-auto d-block"
+                     style="height: 150px; weight: 150px" alt="{{request.user.username}}">
+                {% endif %}
             </div>
             <div class="col-md-8">
                 <div class="card-body" style="margin-left: 45px">
@@ -63,8 +69,13 @@
                     <tr>
                         <th scope="row">{{item.id}}</th>
                         <td>
-                            <img src="{% static item.product.image %}" class="rounded mx-auto d-block"
+                            {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" class="rounded mx-auto d-block"
                                  style="height: 200px; weight: 200px" alt="{{ item.product.slug }}">
+                            {% else %}
+                            <img src="{% static 'images/No Product Image Available.png' %}" class="rounded mx-auto d-block"
+                                 alt="{{ item.product.slug }}" style="height: 200px; weight: 200px">
+                            {% endif %}
                         </td>
                         <td>{{item.product.title}}</td>
                         <td>{{item.product_quantity}}</td>

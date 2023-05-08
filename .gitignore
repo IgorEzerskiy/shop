@@ -1,4 +1,4 @@
 venv
-main_app/static/main_app
+main_app/static/images
 .idea
 __pycache__/
