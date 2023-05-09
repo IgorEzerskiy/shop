@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='customer',
+            model_name='user',
             name='image',
             field=models.ImageField(null=True, upload_to='users_image/'),
         ),

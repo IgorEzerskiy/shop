@@ -5,7 +5,7 @@ from django.views.generic.detail import DetailView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from main_app.models import Product, Purchase, Customer
+from main_app.models import Product, Purchase, User
 from main_app.forms import ProductForm, PurchaseForm
 
 
@@ -67,7 +67,7 @@ class PurchaseCreateView(CreateView):
     def form_valid(self, form):
         slug = self.kwargs.get(self.slug_url_kwarg)
         obj = form.save(commit=False)
-        obj.user = Customer.objects.get(id=self.request.user.id)
+        obj.user = User.objects.get(id=self.request.user.id)
         obj.product = Product.objects.get(slug=slug)
         self.success_url = f'/product/{slug}'
 

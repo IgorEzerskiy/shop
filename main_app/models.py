@@ -5,7 +5,7 @@ from django.db.models import F
 from django.utils.text import slugify
 
 
-class Customer(AbstractUser):
+class User(AbstractUser):
     wallet = models.DecimalField(decimal_places=2, max_digits=20)
     image = models.ImageField(upload_to='main_app/static/images/', max_length=100, null=True)
 
@@ -14,7 +14,7 @@ class Customer(AbstractUser):
         super().save(**kwargs)
 
     def update_balance(self, amount):
-        Customer.objects.select_for_update().filter(id=self.id).update(wallet=F('wallet') - amount)
+        User.objects.select_for_update().filter(id=self.id).update(wallet=F('wallet') - amount)
 
 
 class Product(models.Model):
@@ -37,7 +37,7 @@ class Product(models.Model):
 
 
 class Purchase(models.Model):
-    user = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='user')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product')
     product_quantity = models.PositiveIntegerField()
     purchase_time = models.DateTimeField(auto_now=True)
