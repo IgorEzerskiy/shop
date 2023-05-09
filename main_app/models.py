@@ -1,6 +1,7 @@
 import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db.models import F
 from django.utils.text import slugify
 
 
@@ -12,6 +13,9 @@ class Customer(AbstractUser):
         self.wallet = 10000
         super().save(**kwargs)
 
+    def update_balance(self, amount):
+        Customer.objects.select_for_update().filter(id=self.id).update(wallet=F('wallet') - amount)
+
 
 class Product(models.Model):
     slug = models.SlugField(max_length=150, unique=True)
@@ -20,6 +24,9 @@ class Product(models.Model):
     image = models.ImageField(upload_to='main_app/static/images/', max_length=100)
     price = models.DecimalField(decimal_places=2, max_digits=20)
     quantity = models.PositiveIntegerField()
+
+    def update_quantity(self, amount):
+        Product.objects.select_for_update().filter(id=self.id).update(quantity=F('quantity') - amount)
 
     def save(self, **kwargs):
         self.slug = slugify(self.title) + '-' + str(datetime.datetime.now().strftime("%Y-%m-%d-%H-%M"))

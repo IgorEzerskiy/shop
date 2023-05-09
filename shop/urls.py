@@ -17,7 +17,7 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from main_app.views import HomePage, ProductList, Profile, Login, Logout, ProductItem, ProductAdd, ProductUpdate
+from main_app.views import HomePage, ProductList, Profile, Login, Logout, ProductItem, ProductAdd, ProductUpdate, MakePurchase
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from shop import settings
 
@@ -31,5 +31,6 @@ urlpatterns = [
     path('logout/', Logout.as_view(), name='logout'),
     path('product/<slug:slug>/', ProductItem.as_view(), name='product_item'),
     path('add_product/', ProductAdd.as_view(), name='product_add'),
+    path('create-purchase/<slug:slug>', MakePurchase.as_view(), name='create-purchase')
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

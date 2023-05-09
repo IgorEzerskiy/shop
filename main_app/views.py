@@ -1,10 +1,12 @@
-from django.views.generic.base import TemplateView
+from django.http import HttpResponseRedirect
+from django.views.generic.base import TemplateView, RedirectView
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from main_app.models import Product, Purchase
-from main_app.forms import AddProduct
+from django.db import transaction
+from main_app.models import Product, Purchase, Customer
+from main_app.forms import AddProduct, Amount
 
 
 class HomePage(TemplateView):
@@ -36,6 +38,7 @@ class ProductItem(DetailView):
     model = Product
     template_name = 'product_item.html'
     slug_url_kwarg = 'slug'
+    extra_context = {'product_quantity': Amount()}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -52,6 +55,29 @@ class Profile(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['purchase'] = Purchase.objects.filter(user=self.request.user)
         return context
+
+
+class MakePurchase(CreateView):
+    """"""
+    success_url = '/'
+    form_class = Amount
+    slug_url_kwarg = 'slug'
+
+    def form_valid(self, form):
+        with transaction.atomic():
+            obj = form.save(commit=False)
+            obj.user = Customer.objects.get(id=self.request.user.id)
+            obj.product = Product.objects.get(slug=self.kwargs.get(self.slug_url_kwarg))
+
+            if (int(self.request.POST.get('product_quantity'))) <= obj.product.quantity\
+                    and ((obj.product.price*int(self.request.POST.get('product_quantity'))) <= obj.user.wallet):
+                obj.product.update_quantity(amount=int(self.request.POST.get('product_quantity')))
+                obj.user.update_balance(amount=obj.product.price*int(self.request.POST.get('product_quantity')))
+
+                obj.save()
+                return super().form_valid(form=form)
+            else:
+                return HttpResponseRedirect('/')
 
 
 class Login(LoginView):

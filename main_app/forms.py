@@ -1,5 +1,5 @@
 from django import forms
-from main_app.models import Product
+from main_app.models import Product, Purchase
 
 
 class AddProduct(forms.ModelForm):
@@ -13,3 +13,10 @@ class AddProduct(forms.ModelForm):
         model = Product
         fields = ['title', 'description', 'price', 'quantity', 'image']
 
+
+class Amount(forms.ModelForm):
+    product_quantity = forms.IntegerField(label='Quantity', min_value=1, required=True)
+
+    class Meta:
+        model = Purchase
+        fields = ['product_quantity']
