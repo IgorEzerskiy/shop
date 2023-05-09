@@ -17,15 +17,15 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from main_app.views import HomePageView, ProductListView, ProfileView, Login, Logout, ProductDetailView, \
+from main_app.views import ProductListView, ProductV, ProfileView, Login, Logout, ProductDetailView, \
                             ProductCreateView, ProductUpdateView, PurchaseCreateView
 from shop import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', HomePageView.as_view(), name='home_page'),
+    path('', ProductListView.as_view(), name='home_page'),
     path('profile/', ProfileView.as_view(), name='profile'),
-    path('product-list/', ProductListView.as_view(), name='product_list'),
+    path('product-list/', ProductV.as_view(), name='product_list'),
     path('edit-product/<slug:slug>', ProductUpdateView.as_view(), name='product_update'),
     path('login/', Login.as_view(), name='login'),
     path('logout/', Logout.as_view(), name='logout'),

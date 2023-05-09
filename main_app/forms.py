@@ -2,8 +2,8 @@ from django import forms
 from main_app.models import Product, Purchase
 
 
-class AddProductForm(forms.ModelForm):
-    title = forms.CharField(label='Product name', max_length=150, required=True)
+class ProductForm(forms.ModelForm):
+    title = forms.CharField(label='ProductV name', max_length=150, required=True)
     description = forms.CharField(label='Description', max_length=1500, required=True)
     price = forms.DecimalField(label='Price', max_digits=20, decimal_places=2, required=True)
     quantity = forms.IntegerField(label='Quantity', min_value=1, required=True)
@@ -14,7 +14,7 @@ class AddProductForm(forms.ModelForm):
         fields = ['title', 'description', 'price', 'quantity', 'image']
 
 
-class AmountForm(forms.ModelForm):
+class PurchaseForm(forms.ModelForm):
     product_quantity = forms.IntegerField(label='Quantity', min_value=1, required=True)
 
     class Meta:

@@ -6,29 +6,30 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from main_app.models import Product, Purchase, Customer
-from main_app.forms import AddProductForm, AmountForm
+from main_app.forms import ProductForm, PurchaseForm
 
 
-class HomePageView(TemplateView):
+class ProductListView(TemplateView):
     template_name = 'home_page.html'
     extra_context = {'products': Product.objects.all()}
 
 
 class ProductCreateView(LoginRequiredMixin, CreateView):
-    form_class = AddProductForm
+    form_class = ProductForm
     template_name = 'product_add.html'
     success_url = '/'
 
 
 class ProductUpdateView(LoginRequiredMixin, UpdateView):
     login_url = 'login/'
-    form_class = AddProductForm
+    form_class = ProductForm
     template_name = 'product_update.html'
     success_url = '/'
     queryset = Product.objects.all()
 
 
-class ProductListView(LoginRequiredMixin, TemplateView):
+class ProductV(LoginRequiredMixin, TemplateView):
+    """ЭТУ НУЖНО УДАЛИТЬ ВЬЮХУ"""
     login_url = 'login/'
     template_name = 'product_list.html'
     extra_context = {'products': Product.objects.all()}
@@ -38,7 +39,7 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = 'product_item.html'
     slug_url_kwarg = 'slug'
-    extra_context = {'product_quantity': AmountForm()}
+    extra_context = {'product_quantity': PurchaseForm()}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -60,7 +61,7 @@ class ProfileView(LoginRequiredMixin, TemplateView):
 class PurchaseCreateView(CreateView):
     """"""
     success_url = '/'
-    form_class = AmountForm
+    form_class = PurchaseForm
     slug_url_kwarg = 'slug'
 
     def form_valid(self, form):
