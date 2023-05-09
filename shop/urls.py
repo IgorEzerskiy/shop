@@ -17,20 +17,20 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from main_app.views import HomePage, ProductList, Profile, Login, Logout, ProductItem, ProductAdd, ProductUpdate, MakePurchase
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from main_app.views import HomePageView, ProductListView, ProfileView, Login, Logout, ProductDetailView, \
+                            ProductCreateView, ProductUpdateView, PurchaseCreateView
 from shop import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', HomePage.as_view(), name='home_page'),
-    path('profile/', Profile.as_view(), name='profile'),
-    path('product-list/', ProductList.as_view(), name='product_list'),
-    path('edit-product/<slug:slug>', ProductUpdate.as_view(), name='product_update'),
+    path('', HomePageView.as_view(), name='home_page'),
+    path('profile/', ProfileView.as_view(), name='profile'),
+    path('product-list/', ProductListView.as_view(), name='product_list'),
+    path('edit-product/<slug:slug>', ProductUpdateView.as_view(), name='product_update'),
     path('login/', Login.as_view(), name='login'),
     path('logout/', Logout.as_view(), name='logout'),
-    path('product/<slug:slug>/', ProductItem.as_view(), name='product_item'),
-    path('add_product/', ProductAdd.as_view(), name='product_add'),
-    path('create-purchase/<slug:slug>', MakePurchase.as_view(), name='create-purchase')
+    path('product/<slug:slug>/', ProductDetailView.as_view(), name='product_item'),
+    path('add_product/', ProductCreateView.as_view(), name='product_add'),
+    path('create-purchase/<slug:slug>', PurchaseCreateView.as_view(), name='create-purchase')
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

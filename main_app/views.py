@@ -6,39 +6,39 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from main_app.models import Product, Purchase, Customer
-from main_app.forms import AddProduct, Amount
+from main_app.forms import AddProductForm, AmountForm
 
 
-class HomePage(TemplateView):
+class HomePageView(TemplateView):
     template_name = 'home_page.html'
     extra_context = {'products': Product.objects.all()}
 
 
-class ProductAdd(LoginRequiredMixin, CreateView):
-    form_class = AddProduct
+class ProductCreateView(LoginRequiredMixin, CreateView):
+    form_class = AddProductForm
     template_name = 'product_add.html'
     success_url = '/'
 
 
-class ProductUpdate(LoginRequiredMixin, UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     login_url = 'login/'
-    form_class = AddProduct
+    form_class = AddProductForm
     template_name = 'product_update.html'
     success_url = '/'
     queryset = Product.objects.all()
 
 
-class ProductList(LoginRequiredMixin, TemplateView):
+class ProductListView(LoginRequiredMixin, TemplateView):
     login_url = 'login/'
     template_name = 'product_list.html'
     extra_context = {'products': Product.objects.all()}
 
 
-class ProductItem(DetailView):
+class ProductDetailView(DetailView):
     model = Product
     template_name = 'product_item.html'
     slug_url_kwarg = 'slug'
-    extra_context = {'product_quantity': Amount()}
+    extra_context = {'product_quantity': AmountForm()}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -46,7 +46,7 @@ class ProductItem(DetailView):
         return context
 
 
-class Profile(LoginRequiredMixin, TemplateView):
+class ProfileView(LoginRequiredMixin, TemplateView):
     login_url = 'login/'
     template_name = 'profile.html'
     # extra_context = {'purchase': Purchase.objects.filter(user=self.request.user)}
@@ -57,10 +57,10 @@ class Profile(LoginRequiredMixin, TemplateView):
         return context
 
 
-class MakePurchase(CreateView):
+class PurchaseCreateView(CreateView):
     """"""
     success_url = '/'
-    form_class = Amount
+    form_class = AmountForm
     slug_url_kwarg = 'slug'
 
     def form_valid(self, form):
