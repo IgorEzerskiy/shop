@@ -64,20 +64,21 @@ class MakePurchase(CreateView):
     slug_url_kwarg = 'slug'
 
     def form_valid(self, form):
-        with transaction.atomic():
-            obj = form.save(commit=False)
-            obj.user = Customer.objects.get(id=self.request.user.id)
-            obj.product = Product.objects.get(slug=self.kwargs.get(self.slug_url_kwarg))
+        slug = self.kwargs.get(self.slug_url_kwarg)
+        obj = form.save(commit=False)
+        obj.user = Customer.objects.get(id=self.request.user.id)
+        obj.product = Product.objects.get(slug=slug)
+        self.success_url = f'/product/{slug}'
 
-            if (int(self.request.POST.get('product_quantity'))) <= obj.product.quantity\
-                    and ((obj.product.price*int(self.request.POST.get('product_quantity'))) <= obj.user.wallet):
+        if (int(self.request.POST.get('product_quantity'))) <= obj.product.quantity\
+                and ((obj.product.price*int(self.request.POST.get('product_quantity'))) <= obj.user.wallet):
+            with transaction.atomic():
                 obj.product.update_quantity(amount=int(self.request.POST.get('product_quantity')))
                 obj.user.update_balance(amount=obj.product.price*int(self.request.POST.get('product_quantity')))
-
-                obj.save()
-                return super().form_valid(form=form)
-            else:
-                return HttpResponseRedirect('/')
+            obj.save()
+            return super().form_valid(form=form)
+        else:
+            return HttpResponseRedirect(self.success_url)
 
 
 class Login(LoginView):
