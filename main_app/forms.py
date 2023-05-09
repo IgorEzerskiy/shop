@@ -1,5 +1,7 @@
 from django import forms
-from main_app.models import Product, Purchase
+from django.contrib.auth.forms import UserCreationForm
+
+from main_app.models import Product, Purchase, User
 
 
 class ProductForm(forms.ModelForm):
@@ -20,3 +22,11 @@ class PurchaseForm(forms.ModelForm):
     class Meta:
         model = Purchase
         fields = ['product_quantity']
+
+
+class UserCreateForm(UserCreationForm):
+    image = forms.ImageField(label='Image', max_length=100, required=False)
+
+    class Meta:
+        model = User
+        fields = ['username', 'wallet', 'image']

@@ -6,7 +6,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from main_app.models import Product, Purchase, User
-from main_app.forms import ProductForm, PurchaseForm
+from main_app.forms import ProductForm, PurchaseForm, UserCreateForm
 
 
 class ProductListView(TemplateView):
@@ -82,14 +82,17 @@ class PurchaseCreateView(CreateView):
             return HttpResponseRedirect(self.success_url)
 
 
-class Login(LoginView):
-    success_url = '/'
+class UserLoginView(LoginView):
     template_name = 'login.html'
-
-    def get_success_url(self):
-        return self.success_url
-
-
-class Logout(LoginRequiredMixin, LogoutView):
-    login_url = 'login/'
     next_page = '/'
+
+
+class UserLogoutView(LoginRequiredMixin, LogoutView):
+    http_method_names = ['post']
+    next_page = '/'
+
+
+class UserCreateView(CreateView):
+    template_name = 'registration.html'
+    form_class = UserCreateForm
+    success_url = '/'

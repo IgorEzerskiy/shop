@@ -17,8 +17,8 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from main_app.views import ProductListView, ProductV, ProfileView, Login, Logout, ProductDetailView, \
-                            ProductCreateView, ProductUpdateView, PurchaseCreateView
+from main_app.views import ProductListView, ProductV, ProfileView, UserLoginView, UserLogoutView, ProductDetailView, \
+                            ProductCreateView, ProductUpdateView, PurchaseCreateView, UserCreateView
 from shop import settings
 
 urlpatterns = [
@@ -27,10 +27,11 @@ urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
     path('product-list/', ProductV.as_view(), name='product_list'),
     path('edit-product/<slug:slug>', ProductUpdateView.as_view(), name='product_update'),
-    path('login/', Login.as_view(), name='login'),
-    path('logout/', Logout.as_view(), name='logout'),
+    path('login/', UserLoginView.as_view(), name='login'),
+    path('logout/', UserLogoutView.as_view(), name='logout'),
     path('product/<slug:slug>/', ProductDetailView.as_view(), name='product_item'),
     path('add_product/', ProductCreateView.as_view(), name='product_add'),
-    path('create-purchase/<slug:slug>', PurchaseCreateView.as_view(), name='create-purchase')
+    path('create-purchase/<slug:slug>', PurchaseCreateView.as_view(), name='create-purchase'),
+    path('registration/', UserCreateView.as_view(), name='registration')
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
