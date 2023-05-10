@@ -17,7 +17,7 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
-from main_app.views import ProductListView, ProductV, ProfileView, UserLoginView, UserLogoutView, ProductDetailView, \
+from main_app.views import ProductListView, ProfileView, UserLoginView, UserLogoutView, ProductDetailView, \
                             ProductCreateView, ProductUpdateView, PurchaseCreateView, UserCreateView
 from shop import settings
 
@@ -25,7 +25,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', ProductListView.as_view(), name='home_page'),
     path('profile/', ProfileView.as_view(), name='profile'),
-    path('product-list/', ProductV.as_view(), name='product_list'),
     path('edit-product/<slug:slug>', ProductUpdateView.as_view(), name='product_update'),
     path('login/', UserLoginView.as_view(), name='login'),
     path('logout/', UserLogoutView.as_view(), name='logout'),

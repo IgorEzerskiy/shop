@@ -2,10 +2,12 @@
 {% load static %}
 
 {% block content %}
-<form method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Login">
-</form>
-<a class="nav-link" href={% url 'registration' %}>Registration</a>
+<div class="container-sm">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Login" class="btn btn-outline-success" style="width: 150px;">
+    </form>
+    <a class="nav-link" style="margin-top: 15px" href={% url 'registration' %}>Registration</a>
+</div>
 {% endblock %}

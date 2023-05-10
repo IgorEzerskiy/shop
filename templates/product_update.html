@@ -2,9 +2,11 @@
 {% load static %}
 
 {% block content %}
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" value="Update">Add</button>
-  </form>
+<div class="container-sm">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" value="Update" class="btn btn-outline-success">Update</button>
+    </form>
+</div>
 {% endblock %}

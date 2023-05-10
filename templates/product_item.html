@@ -19,9 +19,12 @@
             {% if not request.user.is_superuser and request.user.is_authenticated %}
             <form method="post" action={% url "create-purchase" product.slug %}>
                 {% csrf_token %}
-                {{ product_quantity }}
+                {{ product_quantity.as_p }}
             <button type="submit" class="btn btn-primary">Buy</button>
             </form>
+            {% endif %}
+            {% if request.user.is_superuser %}
+                <a href={% url "product_update" product.slug %} class="btn btn-warning">Edit</a>
             {% endif %}
 
         </div>

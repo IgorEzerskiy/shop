@@ -6,7 +6,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from main_app.models import Product, Purchase, User
-from main_app.forms import ProductForm, PurchaseForm, UserCreateForm
+from main_app.forms import ProductForm, PurchaseForm, UserCreateForm, UserForm
 
 
 class ProductListView(TemplateView):
@@ -26,13 +26,6 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'product_update.html'
     success_url = '/'
     queryset = Product.objects.all()
-
-
-class ProductV(LoginRequiredMixin, TemplateView):
-    """ЭТУ НУЖНО УДАЛИТЬ ВЬЮХУ"""
-    login_url = 'login/'
-    template_name = 'product_list.html'
-    extra_context = {'products': Product.objects.all()}
 
 
 class ProductDetailView(DetailView):
@@ -84,6 +77,7 @@ class PurchaseCreateView(CreateView):
 
 class UserLoginView(LoginView):
     template_name = 'login.html'
+    form_class = UserForm
     next_page = '/'
 
 
