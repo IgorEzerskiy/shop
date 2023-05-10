@@ -4,13 +4,15 @@
 {% block content %}
 <div class="container text-center">
     <div class="row row-cols-1 row-cols-md-3 g-4" style="margin-top: 5px">
-      {% for product in products%}
+        {% for product in page_obj %}
         <div class="col">
-            <div class="card h-100">
+            <div class="card" style="height: 500px">
                 {% if product.image %}
-                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.slug }}">
+                <img src="{{ product.image.url }}" class="rounded mx-auto d-block" alt="{{ product.slug }}"
+                     style="height: 200px; weight: 200px">
                 {% else %}
-                    <img src="{% static 'images/No ProductV Image Available.png' %}" class="card-img-top" alt="{{ product.slug }}">
+                <img src="{% static 'images/No ProductV Image Available.png' %}" class="rounded mx-auto d-block"
+                     alt="{{ product.slug }}" style="height: 200px; weight: 200px">
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{ product.title }}</h5>
@@ -21,8 +23,22 @@
                 <a href={% url "product_item" product.slug %} class="btn btn-success">Show</a>
             </div>
         </div>
-      {% endfor %}
+        {% endfor %}
     </div>
-
 </div>
+<nav aria-label="Page navigation example" style="margin-top: 15px">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        </li>
+        {% endif %}
+        <li class="page-item"><a class="page-link">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a></li>
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
 {% endblock %}
