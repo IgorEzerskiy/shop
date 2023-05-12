@@ -18,26 +18,32 @@
             <p class="card-text"><small class="text-body-secondary">Quantity: {{ product.quantity }} </small></p>
             {% if not request.user.is_superuser and request.user.is_authenticated %}
             <form method="post" action={% url "create-purchase" product.slug %}>
-                {% csrf_token %}
-                {{ product_quantity.as_p }}
+            {% csrf_token %}
+            {{ product_quantity.as_p }}
             <button type="submit" class="btn btn-primary">Buy</button>
             </form>
             {% endif %}
             {% if request.user.is_superuser %}
-                <a href={% url "product_update" product.slug %} class="btn btn-warning">Edit</a>
+            <a href={% url "product_update" product.slug %} class="btn btn-warning">Edit</a>
             {% endif %}
 
         </div>
     </div>
     <div class="w-auto p-3">
+        {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+            <strong>Error: </strong> {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+        {% else %}
+
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+            <strong>Good: </strong> {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+        {% endif %}
+        {% endfor %}
 
     </div>
 </div>

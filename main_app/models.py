@@ -6,12 +6,8 @@ from django.utils.text import slugify
 
 
 class User(AbstractUser):
-    wallet = models.DecimalField(decimal_places=2, max_digits=20)
+    wallet = models.DecimalField(decimal_places=2, max_digits=20, default=10000)
     image = models.ImageField(upload_to='main_app/static/images/', max_length=100, null=True)
-
-    def save(self, **kwargs):
-        self.wallet = 10000
-        super().save(**kwargs)
 
     def update_balance(self, amount):
         User.objects.select_for_update().filter(id=self.id).update(wallet=F('wallet') - amount)

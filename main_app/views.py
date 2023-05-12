@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView
@@ -5,8 +6,8 @@ from django.views.generic.detail import DetailView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from main_app.models import Product, Purchase, User
-from main_app.forms import ProductForm, PurchaseForm, UserCreateForm, UserForm
+from main_app.models import Product, Purchase, User, PurchaseReturns
+from main_app.forms import ProductForm, PurchaseForm, UserCreateForm, UserForm, PurchaseReturnsCreateForm
 
 
 class ProductListView(ListView):
@@ -31,15 +32,10 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class ProductDetailView(DetailView):
-    model = Product
     template_name = 'product_item.html'
     slug_url_kwarg = 'slug'
     extra_context = {'product_quantity': PurchaseForm()}
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['product'] = self.get_object(queryset=self.model.objects)
-        return context
+    queryset = Product.objects.all()
 
 
 class ProfileView(LoginRequiredMixin, ListView):
@@ -47,34 +43,65 @@ class ProfileView(LoginRequiredMixin, ListView):
     template_name = 'profile.html'
     queryset = Purchase.objects.all()
     paginate_by = 5
+    extra_context = {'purchase_returns_form': PurchaseReturnsCreateForm()}
 
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.filter(user=self.request.user)
 
 
-class PurchaseCreateView(CreateView):
-    """"""
+class PurchaseCreateView(LoginRequiredMixin, CreateView):
+    login_url = 'login/'
+    model = Purchase
     success_url = '/'
     form_class = PurchaseForm
-    slug_url_kwarg = 'slug'
+    http_method_names = ['post']
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'request': self.request,
+                       'slug': self.kwargs['slug']})
+
+        return kwargs
+
+    def get_success_url(self):
+        return f"/product/{self.kwargs['slug']}"
+
+    def form_invalid(self, form):
+        return HttpResponseRedirect(self.get_success_url())
 
     def form_valid(self, form):
-        slug = self.kwargs.get(self.slug_url_kwarg)
         obj = form.save(commit=False)
-        obj.user = User.objects.get(id=self.request.user.id)
-        obj.product = Product.objects.get(slug=slug)
-        self.success_url = f'/product/{slug}'
-
-        if (int(self.request.POST.get('product_quantity'))) <= obj.product.quantity\
-                and ((obj.product.price*int(self.request.POST.get('product_quantity'))) <= obj.user.wallet):
-            with transaction.atomic():
-                obj.product.update_quantity(amount=int(self.request.POST.get('product_quantity')))
-                obj.user.update_balance(amount=obj.product.price*int(self.request.POST.get('product_quantity')))
+        product = form.product
+        obj.product = product
+        obj.user = self.request.user
+        product.update_quantity(amount=obj.product_quantity)
+        self.request.user.update_balance(amount=product.price * obj.product_quantity)
+        with transaction.atomic():
             obj.save()
-            return super().form_valid(form=form)
-        else:
-            return HttpResponseRedirect(self.success_url)
+            product.save()
+            self.request.user.save()
+        messages.success(self.request, "Purchase complete!!!")
+        return super().form_valid(form=form)
+
+
+class PurchaseReturnsCreateView(LoginRequiredMixin, CreateView):
+    login_url = 'login/'
+    model = PurchaseReturns
+    form_class = PurchaseReturnsCreateForm
+    success_url = '/'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'request': self.request.POST.get('product_id')})
+        return kwargs
+
+    def form_invalid(self, form):
+        return HttpResponseRedirect('/')
+
+    def form_valid(self, form):
+        PurchaseReturns.objects.create(purchase=Purchase.objects.get(id=self.request.POST.get('product_id')))
+        return super().form_valid(form=form)
 
 
 class UserLoginView(LoginView):

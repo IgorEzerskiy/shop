@@ -18,7 +18,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 from main_app.views import ProductListView, ProfileView, UserLoginView, UserLogoutView, ProductDetailView, \
-                            ProductCreateView, ProductUpdateView, PurchaseCreateView, UserCreateView
+                            ProductCreateView, ProductUpdateView, PurchaseCreateView, UserCreateView, \
+                            PurchaseReturnsCreateView
 from shop import settings
 
 urlpatterns = [
@@ -31,6 +32,7 @@ urlpatterns = [
     path('product/<slug:slug>/', ProductDetailView.as_view(), name='product_item'),
     path('add_product/', ProductCreateView.as_view(), name='product_add'),
     path('create-purchase/<slug:slug>', PurchaseCreateView.as_view(), name='create-purchase'),
-    path('registration/', UserCreateView.as_view(), name='registration')
+    path('registration/', UserCreateView.as_view(), name='registration'),
+    path('create-return/', PurchaseReturnsCreateView.as_view(), name='create_return')
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
