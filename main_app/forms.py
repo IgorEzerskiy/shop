@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
+from django.db import transaction
+import datetime
 from main_app.models import Product, Purchase, User, PurchaseReturns
 
 
@@ -44,10 +46,12 @@ class PurchaseForm(forms.ModelForm):
         try:
             product = Product.objects.get(slug=self.slug)
             self.product = product
+
             if self.request.user.wallet < cleaned_data.get('product_quantity') * product.price:
                 self.add_error(None, 'Error')
                 messages.error(self.request, 'The amount of money in your wallet is less than the cost of your '
                                              'purchase.')
+
             if cleaned_data.get('product_quantity') > product.quantity:
                 self.add_error(None, 'Error')
                 messages.error(self.request, 'The quantity you entered is more than what is in stock.')
@@ -73,8 +77,6 @@ class UserCreateForm(UserCreationForm):
 
 
 class UserForm(AuthenticationForm):
-    class Meta:
-        model = User
 
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
@@ -83,23 +85,39 @@ class UserForm(AuthenticationForm):
 
 
 class PurchaseReturnsCreateForm(forms.ModelForm):
-    purchase = forms.CharField(label='purchase_slug')
-
     class Meta:
         model = PurchaseReturns
-        fields = ['purchase']
+        fields = []
 
-    def __init__(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         if 'request' in kwargs:
             self.request = kwargs.pop('request')
-        super(PurchaseReturnsCreateForm, self).__init__(**kwargs)
-        if 'request' in kwargs:
-            self.fields['purchase'].widget.attrs.update({'value': '1'})
+        super(PurchaseReturnsCreateForm, self).__init__(*args, **kwargs)
 
-    def clean_purchase(self):
+    def clean(self):
         cleaned_data = super().clean()
         try:
-            purchase = Purchase.objects.get(id=self.request)
+            purchase = Purchase.objects.get(id=self.request.POST.get('product_id'))
+            purchased_at = purchase.purchase_time.replace(tzinfo=datetime.timezone.utc)
+            datetime_now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
+            time_delta = datetime.timedelta(minutes=3)
+            time_edge = purchased_at + time_delta
+
+            if datetime_now > time_edge:
+                self.add_error(None, 'Error')
+                messages.error(self.request, 'Time out!!!')
+
+            if PurchaseReturns.objects.filter(purchase_id=self.request.POST.get('product_id')).exists():
+                self.add_error(None, 'Error')
+                messages.error(self.request, 'Purchase return is alredy exist.')
+            else:
+                self.purchase = purchase
         except Product.DoesNotExist:
             self.add_error(None, 'Error')
             messages.error(self.request, 'Product does not exist.')
+
+    def save(self, commit=False):
+        with transaction.atomic():
+            PurchaseReturns.objects.create(purchase=self.purchase)
+        messages.success(self.request, "Return complete!!!")
+        super().save(commit=False)

@@ -29,13 +29,24 @@
             </div>
         </div>
     </div>
+    {% for message in messages %}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
     <div class="w-auto p-3">
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+            <strong>Error: </strong> {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     </div>
 
+    {% else %}
+    <div class="w-auto p-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Good: </strong> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
 </div>
 
 <div class="accordion" id="accordionPanelsStayOpenExample">
@@ -54,7 +65,7 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Image</th>
-                        <th scope="col">ProductV name</th>
+                        <th scope="col">Product name</th>
                         <th scope="col">Bought</th>
                         <th scope="col">Purchase time</th>
                     </tr>
@@ -79,8 +90,8 @@
                         <td>
                             <form method="post" action="{% url 'create_return' %}">
                                 {% csrf_token %}
-                                {{ purchase_returns_form.purchase.as_hidden }}
-                                <input type="hidden" value="{{ item.product.pk }}" name="product_id">
+                                {{ purchase_returns_form }}
+                                <input type="hidden" value="{{ item.id }}" name="product_id">
                                 <button type="submit" class="btn btn-danger">Return</button>
                             </form>
                         </td>
