@@ -7,7 +7,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from main_app.models import Product, Purchase, User, PurchaseReturns
-from main_app.forms import ProductForm, PurchaseForm, UserCreateForm, UserForm, PurchaseReturnsCreateForm
+from main_app.forms import ProductForm, PurchaseCreateForm, UserCreateForm, UserLoginForm, PurchaseReturnsCreateForm
 
 
 class ProductListView(ListView):
@@ -33,8 +33,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
 class ProductDetailView(DetailView):
     template_name = 'product_item.html'
-    slug_url_kwarg = 'slug'
-    extra_context = {'product_quantity': PurchaseForm()}
+    extra_context = {'product_quantity': PurchaseCreateForm()}
     queryset = Product.objects.all()
 
 
@@ -54,7 +53,7 @@ class PurchaseCreateView(LoginRequiredMixin, CreateView):
     login_url = 'login/'
     model = Purchase
     success_url = '/profile'
-    form_class = PurchaseForm
+    form_class = PurchaseCreateForm
     http_method_names = ['post']
 
     def get_form_kwargs(self):
@@ -125,7 +124,7 @@ class PurchaseReturnsApproveDeleteView(DeleteView):
 
 class UserLoginView(LoginView):
     template_name = 'login.html'
-    form_class = UserForm
+    form_class = UserLoginForm
     next_page = '/'
 
 

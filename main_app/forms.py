@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.db import transaction
 import datetime
 from main_app.models import Product, Purchase, User, PurchaseReturns
+from shop import settings
 
 
 class ProductForm(forms.ModelForm):
@@ -26,7 +27,7 @@ class ProductForm(forms.ModelForm):
         self.fields['image'].widget.attrs.update({'class': 'form-control'})
 
 
-class PurchaseForm(forms.ModelForm):
+class PurchaseCreateForm(forms.ModelForm):
     product_quantity = forms.IntegerField(label='Quantity', min_value=1, required=True)
 
     class Meta:
@@ -38,7 +39,7 @@ class PurchaseForm(forms.ModelForm):
             self.request = kwargs.pop('request')
         if 'slug' in kwargs:
             self.slug = kwargs.pop('slug')
-        super(PurchaseForm, self).__init__(*args, **kwargs)
+        super(PurchaseCreateForm, self).__init__(*args, **kwargs)
         self.fields['product_quantity'].widget.attrs.update({'class': 'form-control'})
 
     def clean(self):
@@ -76,10 +77,10 @@ class UserCreateForm(UserCreationForm):
         self.fields['password2'].widget.attrs.update({'class': 'form-control'})
 
 
-class UserForm(AuthenticationForm):
+class UserLoginForm(AuthenticationForm):
 
     def __init__(self, *args, **kwargs):
-        super(UserForm, self).__init__(*args, **kwargs)
+        super(UserLoginForm, self).__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'class': 'form-control'})
         self.fields['password'].widget.attrs.update({'class': 'form-control'})
 
@@ -100,7 +101,7 @@ class PurchaseReturnsCreateForm(forms.ModelForm):
             purchase = Purchase.objects.get(id=self.request.POST.get('product_id'))
             purchased_at = purchase.purchase_time.replace(tzinfo=datetime.timezone.utc)
             datetime_now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
-            time_delta = datetime.timedelta(minutes=3)
+            time_delta = datetime.timedelta(minutes=settings.ALLOWED_RETURN_TIME)
             time_edge = purchased_at + time_delta
 
             if datetime_now > time_edge:
@@ -112,12 +113,11 @@ class PurchaseReturnsCreateForm(forms.ModelForm):
                 messages.error(self.request, 'Purchase return is alredy exist.')
             else:
                 self.purchase = purchase
-        except Product.DoesNotExist:
+        except Purchase.DoesNotExist:
             self.add_error(None, 'Error')
             messages.error(self.request, 'Product does not exist.')
 
-    def save(self, commit=False):
-        with transaction.atomic():
-            PurchaseReturns.objects.create(purchase=self.purchase)
+    def save(self, commit=True):
+        PurchaseReturns.objects.create(purchase=self.purchase)
         messages.success(self.request, "Return complete!!!")
-        super().save(commit=False)
+        # super().save(commit=True)
