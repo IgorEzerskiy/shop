@@ -1,7 +1,6 @@
 import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.db.models import F
 from django.utils.text import slugify
 
 
@@ -28,8 +27,8 @@ class Product(models.Model):
 
 
 class Purchase(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='purchase')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='purchase')
     product_quantity = models.PositiveIntegerField()
     purchase_time = models.DateTimeField(auto_now=True)
 

@@ -120,4 +120,3 @@ class PurchaseReturnsCreateForm(forms.ModelForm):
     def save(self, commit=True):
         PurchaseReturns.objects.create(purchase=self.purchase)
         messages.success(self.request, "Return complete!!!")
-        # super().save(commit=True)

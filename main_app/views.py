@@ -4,10 +4,15 @@ from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db import transaction
 from main_app.models import Product, Purchase, User, PurchaseReturns
 from main_app.forms import ProductForm, PurchaseCreateForm, UserCreateForm, UserLoginForm, PurchaseReturnsCreateForm
+
+
+class AdminPassedMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
 
 
 class ProductListView(ListView):
@@ -16,14 +21,14 @@ class ProductListView(ListView):
     paginate_by = 3
 
 
-class ProductCreateView(LoginRequiredMixin, CreateView):
+class ProductCreateView(AdminPassedMixin, LoginRequiredMixin, CreateView):
     login_url = '/'
     form_class = ProductForm
     template_name = 'product_add.html'
     success_url = '/'
 
 
-class ProductUpdateView(LoginRequiredMixin, UpdateView):
+class ProductUpdateView(AdminPassedMixin, LoginRequiredMixin, UpdateView):
     login_url = 'login/'
     model = Product
     form_class = ProductForm
@@ -96,18 +101,18 @@ class PurchaseReturnsCreateView(LoginRequiredMixin, CreateView):
         return HttpResponseRedirect(self.success_url)
 
 
-class PurchaseReturnsListView(ListView):
+class PurchaseReturnsListView(AdminPassedMixin, ListView):
     template_name = 'product_returns_list.html'
     model = PurchaseReturns
     paginate_by = 3
 
 
-class PurchaseReturnsDeleteView(DeleteView):
+class PurchaseReturnsDeleteView(AdminPassedMixin, DeleteView):
     model = PurchaseReturns
     success_url = '/'
 
 
-class PurchaseReturnsApproveDeleteView(DeleteView):
+class PurchaseReturnsApproveDeleteView(AdminPassedMixin, DeleteView):
     model = Purchase
     success_url = '/'
 
