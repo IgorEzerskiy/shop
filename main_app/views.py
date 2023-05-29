@@ -16,12 +16,14 @@ class AdminPassedMixin(UserPassesTestMixin):
 
 
 class ProductListView(ListView):
+    # Api done
     template_name = 'home_page.html'
     model = Product
-    paginate_by = 3
+    paginate_by = 15
 
 
 class ProductCreateView(AdminPassedMixin, LoginRequiredMixin, CreateView):
+    # Api done
     login_url = '/'
     form_class = ProductForm
     template_name = 'product_add.html'
@@ -29,6 +31,7 @@ class ProductCreateView(AdminPassedMixin, LoginRequiredMixin, CreateView):
 
 
 class ProductUpdateView(AdminPassedMixin, LoginRequiredMixin, UpdateView):
+    # Api done
     login_url = 'login/'
     model = Product
     form_class = ProductForm
@@ -37,12 +40,14 @@ class ProductUpdateView(AdminPassedMixin, LoginRequiredMixin, UpdateView):
 
 
 class ProductDetailView(DetailView):
+    # Api done
     template_name = 'product_item.html'
     extra_context = {'product_quantity': PurchaseCreateForm()}
     queryset = Product.objects.all()
 
 
 class ProfileView(LoginRequiredMixin, ListView):
+    # Api done
     login_url = 'login/'
     template_name = 'profile.html'
     queryset = Purchase.objects.all()
@@ -55,6 +60,7 @@ class ProfileView(LoginRequiredMixin, ListView):
 
 
 class PurchaseCreateView(LoginRequiredMixin, CreateView):
+    # Api done
     login_url = 'login/'
     model = Purchase
     success_url = '/profile'
@@ -87,6 +93,7 @@ class PurchaseCreateView(LoginRequiredMixin, CreateView):
 
 
 class PurchaseReturnsCreateView(LoginRequiredMixin, CreateView):
+    """DO IT"""
     login_url = 'login/'
     model = PurchaseReturns
     form_class = PurchaseReturnsCreateForm
@@ -102,17 +109,20 @@ class PurchaseReturnsCreateView(LoginRequiredMixin, CreateView):
 
 
 class PurchaseReturnsListView(AdminPassedMixin, ListView):
+    """DO IT"""
     template_name = 'product_returns_list.html'
     model = PurchaseReturns
     paginate_by = 3
 
 
 class PurchaseReturnsDeleteView(AdminPassedMixin, DeleteView):
+    """DO IT"""
     model = PurchaseReturns
     success_url = '/'
 
 
 class PurchaseReturnsApproveDeleteView(AdminPassedMixin, DeleteView):
+    """DO IT"""
     model = Purchase
     success_url = '/'
 
@@ -139,6 +149,7 @@ class UserLogoutView(LoginRequiredMixin, LogoutView):
 
 
 class UserCreateView(CreateView):
+    # Api done
     template_name = 'registration.html'
     form_class = UserCreateForm
     success_url = '/'

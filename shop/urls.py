@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from main_app.views import ProductListView, ProfileView, UserLoginView, UserLogoutView, ProductDetailView, \
                             ProductCreateView, ProductUpdateView, PurchaseCreateView, UserCreateView, \
                             PurchaseReturnsCreateView, PurchaseReturnsListView, PurchaseReturnsDeleteView,\
@@ -37,5 +37,6 @@ urlpatterns = [
     path('create-return/', PurchaseReturnsCreateView.as_view(), name='create_return'),
     path('returns/', PurchaseReturnsListView.as_view(), name='show_returns'),
     path('delete/<int:pk>', PurchaseReturnsDeleteView.as_view(), name='delete_returns'),
-    path('purchase-approve/<int:pk>', PurchaseReturnsApproveDeleteView.as_view(), name='approve_returns')
+    path('purchase-approve/<int:pk>', PurchaseReturnsApproveDeleteView.as_view(), name='approve_returns'),
+    path('', include('main_app.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
