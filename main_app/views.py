@@ -93,7 +93,7 @@ class PurchaseCreateView(LoginRequiredMixin, CreateView):
 
 
 class PurchaseReturnsCreateView(LoginRequiredMixin, CreateView):
-    """DO IT"""
+    # API done
     login_url = 'login/'
     model = PurchaseReturns
     form_class = PurchaseReturnsCreateForm
@@ -109,20 +109,20 @@ class PurchaseReturnsCreateView(LoginRequiredMixin, CreateView):
 
 
 class PurchaseReturnsListView(AdminPassedMixin, ListView):
-    """DO IT"""
+    # API Done
     template_name = 'product_returns_list.html'
     model = PurchaseReturns
     paginate_by = 3
 
 
 class PurchaseReturnsDeleteView(AdminPassedMixin, DeleteView):
-    """DO IT"""
+    # Api done
     model = PurchaseReturns
     success_url = '/'
 
 
 class PurchaseReturnsApproveDeleteView(AdminPassedMixin, DeleteView):
-    """DO IT"""
+    # API done
     model = Purchase
     success_url = '/'
 

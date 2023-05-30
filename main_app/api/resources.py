@@ -1,11 +1,12 @@
 from django.db import transaction
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.filters import SearchFilter
+from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
+from rest_framework.response import Response
 
-from main_app.api.permissions import IsAdminOrReadOnly
-from main_app.api.serializers import ProductSerializer, UserSerializer, PurchaseSerializers
+from main_app.api.permissions import IsAdminOrReadOnly, IsAdminOrPermissionDenied
+from main_app.api.serializers import ProductSerializer, UserSerializer, PurchaseSerializers, PurchaseReturnsSerializer
 from main_app.models import Product, User, Purchase, PurchaseReturns
-from shop import settings
 
 
 class ProductModelViewSet(viewsets.ModelViewSet):
@@ -42,3 +43,44 @@ class PurchaseModelViewSet(viewsets.ModelViewSet):
             serializer.validated_data['product'].save()
             serializer.save()
 
+
+class PurchaseReturnsCreateApiView(CreateAPIView):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    queryset = PurchaseReturns.objects.all()
+    serializer_class = PurchaseReturnsSerializer
+
+    def get_serializer_context(self):
+        context = super(PurchaseReturnsCreateApiView, self).get_serializer_context()
+        context.update({"request": self.request})
+        return context
+
+class PurchaseReturnsListApiView(ListAPIView):
+    permission_classes = [IsAdminOrPermissionDenied]
+    queryset = PurchaseReturns.objects.all()
+    serializer_class = PurchaseReturnsSerializer
+    http_method_names = ['get']
+
+
+class PurchaseReturnsDeleteApiView(DestroyAPIView):
+    permission_classes = [IsAdminOrPermissionDenied]
+    queryset = PurchaseReturns.objects.all()
+    serializer_class = PurchaseReturnsSerializer
+    http_method_names = ['delete']
+
+
+class PurchaseReturnsApproveDeleteApiView(DestroyAPIView):
+    permission_classes = [IsAdminOrPermissionDenied]
+    queryset = PurchaseReturns.objects.all()
+    serializer_class = PurchaseReturnsSerializer
+    http_method_names = ['delete']
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.purchase.user.wallet += instance.purchase.product.price * instance.purchase.product_quantity
+        instance.purchase.product.quantity += instance.purchase.product_quantity
+
+        with transaction.atomic():
+            instance.purchase.user.save()
+            instance.purchase.product.save()
+            instance.purchase.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)

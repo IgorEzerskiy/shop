@@ -1,7 +1,11 @@
+import datetime
+
 from rest_framework import serializers
 from django.forms.fields import ImageField
-from main_app.models import Product, User, Purchase
+from main_app.models import Product, User, Purchase, PurchaseReturns
 from rest_framework.exceptions import ValidationError
+
+from shop import settings
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -65,3 +69,21 @@ class PurchaseSerializers(serializers.ModelSerializer):
 
     def get_user(self):
         return self.context['request']
+
+
+class PurchaseReturnsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PurchaseReturns
+        fields = ['id', 'purchase', 'purchase_return_time']
+
+    def validate(self, data):
+        purchased_at = data['purchase'].purchase_time.replace(tzinfo=datetime.timezone.utc)
+        datetime_now = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc)
+        time_delta = datetime.timedelta(minutes=settings.ALLOWED_RETURN_TIME)
+        time_edge = purchased_at + time_delta
+
+        if datetime_now > time_edge:
+            raise ValidationError('You can not create a refund, time is up!!!')
+
+        if self.context['request'].user.id != data['purchase'].user.id:
+            raise ValidationError('The user in the request is not the one who made the purchase!!!')
