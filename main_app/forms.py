@@ -49,13 +49,14 @@ class PurchaseCreateForm(forms.ModelForm):
             self.product = product
 
             if self.request.user.wallet < cleaned_data.get('product_quantity') * product.price:
-                self.add_error(None, 'Error')
+                self.add_error(None, 'Wallet error')
                 messages.error(self.request, 'The amount of money in your wallet is less than the cost of your '
                                              'purchase.')
 
             if cleaned_data.get('product_quantity') > product.quantity:
                 self.add_error(None, 'Error')
                 messages.error(self.request, 'The quantity you entered is more than what is in stock.')
+
         except Product.DoesNotExist:
             self.add_error(None, 'Error')
             messages.error(self.request, 'Product does not exist.')
