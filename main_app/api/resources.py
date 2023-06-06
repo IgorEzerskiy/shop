@@ -20,12 +20,17 @@ class ProductModelViewSet(viewsets.ModelViewSet):
 class UserModelViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = UserSerializer
+    http_method_names = ['get']
 
     def get_queryset(self):
         return User.objects.filter(username=self.request.user.username)
 
 
-class ChangePasswordView(UpdateAPIView):
+class UserCreateApiView(CreateAPIView):
+    serializer_class = UserSerializer
+
+
+class PasswordUpdateApiView(UpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ChangePasswordSerializer
 

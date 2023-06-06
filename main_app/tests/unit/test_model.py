@@ -25,7 +25,3 @@ class ProductTestCase(TestCase):
         product.price = -10
         self.assertFalse(expr=product.price > 0, msg='Product price more then zero.')
 
-    #def test_title_max_length(self):
-    #    product = Product.objects.get(title='test_product')
-    #    product.title = ''.join(['a' for i in range(10)])
-    #    self.assertRaises(expected_exception=ValidationError, callable=product.save())

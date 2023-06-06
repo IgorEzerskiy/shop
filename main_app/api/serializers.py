@@ -35,7 +35,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, validators=[validate_password])
 
     class Meta:
         model = User
@@ -45,6 +45,9 @@ class UserSerializer(serializers.ModelSerializer):
         if value < 0:
             raise ValidationError('Amount of money must be more then 0!!!')
         return value
+
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):

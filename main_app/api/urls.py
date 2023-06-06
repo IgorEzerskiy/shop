@@ -3,7 +3,8 @@ from rest_framework import routers
 
 from main_app.api.resources import ProductModelViewSet, UserModelViewSet, PurchaseModelViewSet, \
                                    PurchaseReturnsCreateApiView, PurchaseReturnsListApiView, \
-                                   PurchaseReturnsDeleteApiView, PurchaseReturnsApproveDeleteApiView, ChangePasswordView
+                                   PurchaseReturnsDeleteApiView, PurchaseReturnsApproveDeleteApiView, \
+                                   PasswordUpdateApiView, UserCreateApiView
 
 router = routers.SimpleRouter()
 router.register(r'products', ProductModelViewSet)
@@ -16,5 +17,6 @@ urlpatterns = [
     path('purchase-returns-read/', PurchaseReturnsListApiView.as_view()),
     path('purchase-returns-delete/<int:pk>', PurchaseReturnsDeleteApiView.as_view()),
     path('purchase-returns-approve-delete/<int:pk>', PurchaseReturnsApproveDeleteApiView.as_view()),
-    path('change_password/<int:pk>/', ChangePasswordView.as_view())
+    path('change_password/<int:pk>/', PasswordUpdateApiView.as_view()),
+    path('registration/', UserCreateApiView.as_view())
 ]
