@@ -1,0 +1,122 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-flex justify-content-around">
+    <div class=" mb-3 d-flex align-items-center" style="max-width: 540px; margin-top: 15px;">
+        <div class="row g-0">
+            <div class="col-md-4">
+                {% if request.user.image %}
+                <img src="{{ request.user.image.url }}" class="rounded mx-auto d-block"
+                     style="height: 150px; weight: 150px" alt="{{request.user.username}}">
+                {% else %}
+                <img src="{% static 'images/png-transparent-computer-icons-user-profile-synonyms-and-antonyms-android-android-computer-wallpaper-monochrome-sphere.png' %}"
+                     class="rounded mx-auto d-block"
+                     style="height: 150px; weight: 150px" alt="{{request.user.username}}">
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body" style="margin-left: 45px">
+                    <h5 class="card-title">Username: {{request.user.username}}</h5>
+                    <h6 class="card-title">Wallet: {{request.user.wallet}}₴</h6>
+                    <p class="card-text">First name: {{request.user.first_name}}</p>
+                    <p class="card-text">Last name: {{request.user.last_name}}</p>
+                    <p class="card-text">Email: {{request.user.email}}</p>
+                    <p class="card-text"><small class="text-body-secondary">Created at:
+                        {{request.user.date_joined}}</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for message in messages %}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+    <div class="w-auto p-3">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error: </strong> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+
+    {% else %}
+    <div class="w-auto p-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Good: </strong> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+
+<div class="accordion" id="accordionPanelsStayOpenExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
+                    aria-controls="panelsStayOpen-collapseOne">
+                My purchases
+            </button>
+        </h2>
+        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Product name</th>
+                        <th scope="col">Bought</th>
+                        <th scope="col">Purchase time</th>
+                    </tr>
+                    </thead>
+                    <tbody class="table-group-divider">
+                    {% for item in page_obj %}
+                    <tr>
+                        <th scope="row">{{item.id}}</th>
+                        <td>
+                            {% if item.product.image %}
+                            <img src="{{ item.product.image.url }}" class="rounded mx-auto d-block"
+                                 style="height: 200px; weight: 200px" alt="{{ item.product.slug }}">
+                            {% else %}
+                            <img src="{% static 'images/No Product Image Available.png' %}"
+                                 class="rounded mx-auto d-block"
+                                 alt="{{ item.product.slug }}" style="height: 200px; weight: 200px">
+                            {% endif %}
+                        </td>
+                        <td>{{item.product.title}}</td>
+                        <td>{{item.product_quantity}}</td>
+                        <td>{{item.purchase_time}}</td>
+                        <td>
+                            <form method="post" action="{% url 'create_return' %}">
+                                {% csrf_token %}
+                                {{ purchase_returns_form }}
+                                <input type="hidden" value="{{ item.id }}" name="product_id">
+                                <button type="submit" class="btn btn-danger">Return</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <nav aria-label="Page navigation example" style="margin-top: 15px">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        <li class="page-item"><a class="page-link">{{ page_obj.number }}
+                            of {{ page_obj.paginator.num_pages }}</a></li>
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
