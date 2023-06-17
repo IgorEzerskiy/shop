@@ -112,7 +112,7 @@ USE_TZ = True
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-STATIC_URL = 'main_app/static/'
+STATIC_URL = 'static/'
 
 STATICFILES_DIRS = ()
 STATIC_ROOT = 'static/'
