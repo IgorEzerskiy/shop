@@ -114,8 +114,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 STATIC_URL = 'main_app/static/'
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),)
+STATICFILES_DIRS = ()
+STATIC_ROOT = 'static/'
+
 
 MEDIA_ROOT = (
     BASE_DIR)
